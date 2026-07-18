@@ -23,7 +23,7 @@ Docker Buildx + Trivy + Syft; GitHub Actions build/push.
 ## Usage
 
 ```yaml
-FROM ghcr.io/moveeeax/hardened-go:1.22 AS run
+FROM ghcr.io/cybercapybara/hardened-go:1.22 AS run
 ```
 
 ## License
