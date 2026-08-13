@@ -1,0 +1,15 @@
+# Build output / SBOMs generated in CI
+/sbom/
+*.spdx.json
+
+# Go build artifacts (examples build inside Docker; never commit binaries)
+/examples/go/app
+/app
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Editor / OS
+.DS_Store
