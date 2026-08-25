@@ -4,7 +4,7 @@ name: CI
 # tests first (fast, no daemon), then a real multi-stage build of both images,
 # a Trivy scan with a zero-HIGH/CRITICAL policy, an SBOM per image, and a bats
 # smoke test that proves the built images run as non-root with no shell.
-# Runs on a self-hosted ARC runner (runs-on = scale set name) with dind.
+# Runs on GitHub-hosted ubuntu-latest runners.
 
 on:
   push:
@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: docker-hardened-base
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
