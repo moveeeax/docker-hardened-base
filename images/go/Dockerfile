@@ -4,7 +4,7 @@
 # Runtime layer is gcr.io/distroless/static: no shell, no package manager, no
 # libc — only the CA bundle, tzdata and /etc/passwd. Pinned by digest so the
 # supply chain is reproducible; the :nonroot variant defaults to uid 65532.
-ARG GO_VERSION=1.22
+ARG GO_VERSION=1.27
 
 FROM golang:${GO_VERSION}-alpine AS build
 WORKDIR /src
