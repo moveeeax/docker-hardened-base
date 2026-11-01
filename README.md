@@ -49,7 +49,10 @@ uid=65532 gid=65532
 ```
 
 Then build a service on the locally built `hardened-go` — a fully static
-binary on a shell-less base:
+binary on a shell-less base. `FROM hardened-go:dev` resolves only against the
+local image store (the default `docker` build driver); a buildx
+`docker-container` builder cannot see it and tries to pull
+`docker.io/library/hardened-go:dev` instead:
 
 ```dockerfile
 FROM golang:1.27-alpine AS build

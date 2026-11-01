@@ -40,6 +40,9 @@ jobs:
           set -eux
           docker build -q -f images/go/Dockerfile -t hardened-go:ci .
           docker build -q -f images/python/Dockerfile -t hardened-python:ci .
+          # Print the built sizes so the README figures can be checked
+          # against a real build instead of being guessed.
+          docker image ls --format '{{.Repository}}:{{.Tag}} {{.Size}}' | grep '^hardened-'
 
       - name: Install Trivy + Syft
         run: |
