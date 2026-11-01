@@ -38,34 +38,36 @@ The policy enforced on the final runtime stage:
 
 ## Usage
 
-Build a service on `hardened-go` — a fully static binary on a shell-less base:
+The images are not published to any registry: build them locally (or push
+them to a registry you control) before using them.
+
+```console
+$ ./scripts/build.sh            # builds hardened-go:dev and hardened-python:dev
+$ docker run --rm -p 8080:8080 hardened-go:dev &
+$ curl -s localhost:8080/whoami
+uid=65532 gid=65532
+```
+
+Then build a service on the locally built `hardened-go` — a fully static
+binary on a shell-less base:
 
 ```dockerfile
-FROM golang:1.22-alpine AS build
+FROM golang:1.27-alpine AS build
 WORKDIR /src
 ENV CGO_ENABLED=0
 COPY . .
 RUN go build -ldflags="-s -w" -o /out/app .
 
-FROM ghcr.io/moveeeax/hardened-go:1.22
+FROM hardened-go:dev
 COPY --from=build /out/app /app
 USER 65532:65532
 ENTRYPOINT ["/app"]
 ```
 
-Or run the bundled examples locally:
+Multi-arch build & push to your own registry:
 
 ```console
-$ ./scripts/build.sh            # builds hardened-go:dev and hardened-python:dev
-$ docker run --rm -p 8080:8080 ghcr.io/moveeeax/hardened-go:dev &
-$ curl -s localhost:8080/whoami
-uid=65532 gid=65532
-```
-
-Multi-arch build & push:
-
-```console
-$ PLATFORMS=linux/amd64,linux/arm64 PUSH=1 TAG=1.22 ./scripts/build.sh go
+$ PLATFORMS=linux/amd64,linux/arm64 PUSH=1 REGISTRY=ghcr.io/<you> TAG=dev ./scripts/build.sh go
 ```
 
 ## How it works
