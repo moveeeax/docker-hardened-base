@@ -15,7 +15,7 @@ RUN go mod download
 COPY examples/go/main.go ./
 RUN go build -ldflags="-s -w" -o /out/app .
 
-FROM gcr.io/distroless/static-debian12@sha256:1b7b9f0f0e0a1d2155f531db587cc48ec26aaf97ab64364225f5bf18a054e66a
+FROM gcr.io/distroless/static-debian12@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
 LABEL org.opencontainers.image.title="hardened-go" \
       org.opencontainers.image.description="Minimal distroless base for static Go services" \
       org.opencontainers.image.source="https://github.com/moveeeax/docker-hardened-base" \
