@@ -13,8 +13,8 @@ those promises slip.
 
 | Image | Base | Runtime size | Runs as |
 |-------|------|--------------|---------|
-| `hardened-go` | `gcr.io/distroless/static-debian12` (pinned) | ~12 MB | uid 65532 |
-| `hardened-python` | `gcr.io/distroless/python3-debian12` (pinned) | ~90 MB | uid 65532 |
+| `hardened-go` | `gcr.io/distroless/static-debian13` (pinned) | ~12 MB | uid 65532 |
+| `hardened-python` | `gcr.io/distroless/python3-debian13` (pinned) | ~90 MB | uid 65532 |
 
 ## Why
 

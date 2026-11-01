@@ -15,12 +15,12 @@ RUN go mod download
 COPY examples/go/main.go ./
 RUN go build -ldflags="-s -w" -o /out/app .
 
-FROM gcr.io/distroless/static-debian12@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+FROM gcr.io/distroless/static-debian13@sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329
 LABEL org.opencontainers.image.title="hardened-go" \
       org.opencontainers.image.description="Minimal distroless base for static Go services" \
       org.opencontainers.image.source="https://github.com/moveeeax/docker-hardened-base" \
       org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.base.name="gcr.io/distroless/static-debian12:nonroot"
+      org.opencontainers.image.base.name="gcr.io/distroless/static-debian13:nonroot"
 COPY --from=build /out/app /app
 # uid:gid 65532 (nonroot) — enforced numerically so read-only rootfs and
 # runAsNonRoot admission policies can verify it without resolving /etc/passwd.
