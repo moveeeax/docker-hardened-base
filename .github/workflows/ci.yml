@@ -44,10 +44,16 @@ jobs:
       - name: Install Trivy + Syft
         run: |
           set -eux
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
-            | sudo sh -s -- -b /usr/local/bin
-          curl -sfL https://raw.githubusercontent.com/anchore/syft/main/install.sh \
-            | sudo sh -s -- -b /usr/local/bin
+          # Install script and binary are both pinned to a release tag so the
+          # gate does not change under us between runs.
+          TRIVY_VERSION=v0.76.1
+          SYFT_VERSION=v1.55.0
+          curl -sfL "https://raw.githubusercontent.com/aquasecurity/trivy/${TRIVY_VERSION}/contrib/install.sh" \
+            | sudo sh -s -- -b /usr/local/bin "${TRIVY_VERSION}"
+          curl -sfL "https://raw.githubusercontent.com/anchore/syft/${SYFT_VERSION}/install.sh" \
+            | sudo sh -s -- -b /usr/local/bin "${SYFT_VERSION}"
+          trivy --version
+          syft version
 
       - name: Trivy scan (block on HIGH/CRITICAL)
         run: |
