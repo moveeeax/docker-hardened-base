@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install toolchain
         run: |
@@ -40,14 +40,23 @@ jobs:
           set -eux
           docker build -q -f images/go/Dockerfile -t hardened-go:ci .
           docker build -q -f images/python/Dockerfile -t hardened-python:ci .
+          # Print the built sizes so the README figures can be checked
+          # against a real build instead of being guessed.
+          docker image ls --format '{{.Repository}}:{{.Tag}} {{.Size}}' | grep '^hardened-'
 
       - name: Install Trivy + Syft
         run: |
           set -eux
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
-            | sudo sh -s -- -b /usr/local/bin
-          curl -sfL https://raw.githubusercontent.com/anchore/syft/main/install.sh \
-            | sudo sh -s -- -b /usr/local/bin
+          # Install script and binary are both pinned to a release tag so the
+          # gate does not change under us between runs.
+          TRIVY_VERSION=v0.76.1
+          SYFT_VERSION=v1.55.0
+          curl -sfL "https://raw.githubusercontent.com/aquasecurity/trivy/${TRIVY_VERSION}/contrib/install.sh" \
+            | sudo sh -s -- -b /usr/local/bin "${TRIVY_VERSION}"
+          curl -sfL "https://raw.githubusercontent.com/anchore/syft/${SYFT_VERSION}/install.sh" \
+            | sudo sh -s -- -b /usr/local/bin "${SYFT_VERSION}"
+          trivy --version
+          syft version
 
       - name: Trivy scan (block on HIGH/CRITICAL)
         run: |
@@ -64,7 +73,7 @@ jobs:
           syft hardened-python:ci -o spdx-json=sbom/hardened-python.spdx.json
 
       - name: Upload SBOMs
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: sboms
           path: sbom/

@@ -13,8 +13,11 @@ those promises slip.
 
 | Image | Base | Runtime size | Runs as |
 |-------|------|--------------|---------|
-| `hardened-go` | `gcr.io/distroless/static-debian12` (pinned) | ~12 MB | uid 65532 |
-| `hardened-python` | `gcr.io/distroless/python3-debian12` (pinned) | ~90 MB | uid 65532 |
+| `hardened-go` | `gcr.io/distroless/static-debian13` (pinned) | ~8 MB | uid 65532 |
+| `hardened-python` | `gcr.io/distroless/python3-debian13` (pinned) | ~60 MB | uid 65532 |
+
+Sizes are `docker image ls` output for the linux/amd64 images built in CI
+(`hardened-go` includes the example server from `examples/go`).
 
 ## Why
 
@@ -38,34 +41,39 @@ The policy enforced on the final runtime stage:
 
 ## Usage
 
-Build a service on `hardened-go` — a fully static binary on a shell-less base:
+The images are not published to any registry: build them locally (or push
+them to a registry you control) before using them.
+
+```console
+$ ./scripts/build.sh            # builds hardened-go:dev and hardened-python:dev
+$ docker run --rm -p 8080:8080 hardened-go:dev &
+$ curl -s localhost:8080/whoami
+uid=65532 gid=65532
+```
+
+Then build a service on the locally built `hardened-go` — a fully static
+binary on a shell-less base. `FROM hardened-go:dev` resolves only against the
+local image store (the default `docker` build driver); a buildx
+`docker-container` builder cannot see it and tries to pull
+`docker.io/library/hardened-go:dev` instead:
 
 ```dockerfile
-FROM golang:1.22-alpine AS build
+FROM golang:1.27-alpine AS build
 WORKDIR /src
 ENV CGO_ENABLED=0
 COPY . .
 RUN go build -ldflags="-s -w" -o /out/app .
 
-FROM ghcr.io/moveeeax/hardened-go:1.22
+FROM hardened-go:dev
 COPY --from=build /out/app /app
 USER 65532:65532
 ENTRYPOINT ["/app"]
 ```
 
-Or run the bundled examples locally:
+Multi-arch build & push to your own registry:
 
 ```console
-$ ./scripts/build.sh            # builds hardened-go:dev and hardened-python:dev
-$ docker run --rm -p 8080:8080 ghcr.io/moveeeax/hardened-go:dev &
-$ curl -s localhost:8080/whoami
-uid=65532 gid=65532
-```
-
-Multi-arch build & push:
-
-```console
-$ PLATFORMS=linux/amd64,linux/arm64 PUSH=1 TAG=1.22 ./scripts/build.sh go
+$ PLATFORMS=linux/amd64,linux/arm64 PUSH=1 REGISTRY=ghcr.io/<you> TAG=dev ./scripts/build.sh go
 ```
 
 ## How it works
