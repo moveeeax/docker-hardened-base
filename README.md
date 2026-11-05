@@ -100,3 +100,7 @@ $ bats test/smoke.bats                                  # builds + runs the imag
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+---
+
+**Archived on 2026-11-05.** merge into dockerfile-slim-advisor: the images are thin, unpublished wrappers over Google distroless with an example app baked in. Docker Hardened Images and Chainguard ship maintained, rebuilt and signed versions of the same thing. The one original part, the DHB001-DHB007 policy linter, belongs in dockerfile-slim-advisor as `--profile hardened` (see that file). After that, archive the repo or keep it as a reference example. The scope moves to [dockerfile-slim-advisor](https://github.com/moveeeax/dockerfile-slim-advisor/issues/3).
